@@ -410,3 +410,362 @@ aws ec2 copy-image \
 ```
 
 Este resumen provee un estudio detallado para dominar EC2 Image Builder y aplicarlo en escenarios prácticos empresariales.
+
+# 59. EC2 Instance Store
+
+1. Un **EC2 Instance Store** es un almacenamiento temporal conectado físicamente al servidor que aloja la instancia EC2, proporcionando un rendimiento extremadamente alto en comparación con los volúmenes EBS.
+
+2. El almacenamiento en **Instance Store** es ideal para aplicaciones que necesitan una gran velocidad de entrada/salida (I/O) y un elevado ancho de banda, especialmente para operaciones intensivas de lectura/escritura.
+
+3. A diferencia de los volúmenes EBS, los **datos almacenados en Instance Store no persisten** una vez que la instancia se detiene o termina; todos los datos almacenados se pierden.
+
+4. El almacenamiento en **Instance Store** no es adecuado para datos críticos que requieran persistencia a largo plazo, ya que no ofrece durabilidad garantizada.
+
+5. Un uso recomendado del **Instance Store** es para datos temporales, caches, buffers o archivos de trabajo transitorios que necesitan accesos extremadamente rápidos.
+
+6. La gestión y respaldo de los datos almacenados en un **Instance Store** son responsabilidad completa del usuario, por lo que se recomienda implementar estrategias adecuadas de respaldo o replicación.
+
+7. El rendimiento de entrada/salida (IOPS) de un **Instance Store** puede ser muy superior al de un volumen EBS, alcanzando millones de operaciones por segundo, mientras que un volumen EBS tipo GP2 tiene un máximo aproximado de 32,000 IOPS.
+
+8. Al seleccionar una instancia EC2, es posible identificar las que cuentan con **Instance Store** mediante su tipo, como por ejemplo, las instancias de la familia "i3", especialmente diseñadas para ofrecer alto rendimiento.
+
+9. Es importante entender que en caso de falla de hardware o terminación inesperada de la instancia, los datos del **Instance Store** son irrecuperables, a menos que se hayan realizado copias o respaldos previos.
+
+10. La responsabilidad total del manejo de **riesgos y respaldos** del almacenamiento Instance Store recae en el usuario, quien debe implementar mecanismos de protección y replicación adecuados según la necesidad de la aplicación.
+
+11. Aunque las instancias con almacenamiento Instance Store ofrecen mayor rendimiento, también requieren mayor gestión operativa para garantizar la disponibilidad de datos y evitar pérdidas inesperadas.
+
+12. AWS no realiza copias de seguridad automáticas del almacenamiento Instance Store, por lo cual es fundamental implementar estrategias manuales de **backup o copia hacia volúmenes EBS** o almacenamiento externo.
+
+12. Las instancias con almacenamiento **Instance Store** son ideales para aplicaciones sensibles a la latencia, procesamiento en tiempo real y tareas que involucran grandes cantidades de operaciones de lectura/escritura frecuentes.
+
+13. Antes de usar **Instance Store**, se recomienda evaluar cuidadosamente los requerimientos de durabilidad y persistencia, ya que una mala elección podría resultar en pérdida total de datos en caso de fallo o reinicio de la instancia.
+
+---
+
+### Ejemplo: Identificar instancias con Instance Store usando AWS CLI
+
+```bash
+# Listar tipos de instancia EC2 que incluyen almacenamiento Instance Store
+aws ec2 describe-instance-types --filters Name=instance-storage-supported,Values=true
+```
+
+### Ejemplo: Montar y usar un volumen de Instance Store en Linux
+
+```bash
+# Verificar discos disponibles (Instance Store)
+lsblk
+
+# Formatear el disco (ejemplo /dev/nvme1n1)
+sudo mkfs -t ext4 /dev/nvme1n1
+
+# Crear punto de montaje y montar el disco
+sudo mkdir /mnt/instancestore
+sudo mount /dev/nvme1n1 /mnt/instance-store
+```
+
+Este documento constituye una referencia útil para estudiar y comprender los conceptos fundamentales del EC2 Instance Store en AWS.
+
+# 60. EFS Overview
+
+1. **Elastic File System (EFS)** es un sistema de almacenamiento compartido en la nube, que puede montarse simultáneamente en múltiples instancias EC2.
+
+2. A diferencia de EBS, que permite conectar un volumen a una sola instancia, **EFS admite la conexión simultánea de cientos de instancias Linux**, facilitando la colaboración y compartición de datos.
+
+3. **EFS solo admite sistemas operativos Linux**, no está disponible para instancias con Windows.
+
+4. El almacenamiento en EFS es altamente **escalable y elástico**, lo que significa que no es necesario planificar previamente el tamaño del almacenamiento; solo se paga por el uso real.
+
+5. El costo de EFS es aproximadamente tres veces mayor que un volumen EBS tipo GP2, pero ofrece la ventaja de compartir archivos entre múltiples instancias.
+
+6. **EFS es regional**, lo que permite el acceso simultáneo desde múltiples Zonas de Disponibilidad dentro de la misma región, garantizando alta disponibilidad y redundancia.
+
+7. AWS proporciona diferentes clases de almacenamiento dentro de EFS, siendo las principales **EFS Standard** y **EFS Infrequent Access (EFS-IA)**.
+
+7. La clase de almacenamiento **EFS-IA** ofrece un ahorro significativo (hasta un 92% menos en costos), especialmente diseñada para almacenar archivos poco accedidos.
+
+8. **La migración automática de archivos a EFS-IA** es posible configurando políticas de ciclo de vida basadas en la frecuencia de acceso a los archivos, sin afectar la experiencia del usuario final.
+
+9. Desde el punto de vista de la aplicación, la ubicación del archivo (ya sea en EFS Standard o EFS-IA) es completamente transparente, manteniendo la sencillez del acceso.
+
+10. EFS no requiere especificar **capacidad inicial**, puesto que el almacenamiento se incrementa o disminuye automáticamente según las necesidades de almacenamiento.
+
+11. La responsabilidad del usuario en EFS se limita a administrar los archivos almacenados, **sin preocuparse por la gestión del tamaño del almacenamiento**.
+
+10. **EFS utiliza puntos de montaje (mount targets)** para conectarse a las instancias EC2, permitiendo que todas compartan exactamente la misma estructura de archivos.
+
+11. El uso más común de EFS es para **almacenar datos compartidos**, como páginas web, repositorios compartidos, o almacenamiento de logs centralizados.
+
+12. EFS es especialmente recomendado para aplicaciones que requieren acceso simultáneo o paralelo a grandes cantidades de archivos, tales como aplicaciones web distribuidas o análisis de datos compartidos.
+
+12. Al configurar EFS, es importante utilizar **grupos de seguridad** para controlar el acceso desde instancias EC2 específicas o subredes, asegurando que el acceso sea seguro y restringido.
+
+13. EFS ofrece una solución de almacenamiento altamente flexible, eficiente y segura para entornos de producción con múltiples instancias, especialmente cuando se busca simplicidad operativa.
+
+14. EFS es especialmente útil para escenarios de **alta escalabilidad y aplicaciones multi-servidor**, gracias a la capacidad de compartir almacenamiento en tiempo real entre instancias.
+
+---
+
+### Ejemplo de código: Montar un volumen EFS en una instancia Linux
+
+```bash
+# Instalar el cliente NFS en una instancia EC2 Linux (Amazon Linux 2)
+sudo yum install -y amazon-efs-utils
+
+# Crear un punto de montaje
+sudo mkdir /mnt/efs
+
+# Montar EFS en el punto creado (fs-12345678 es el ID del sistema de archivos EFS)
+sudo mount -t efs fs-01234567:/ /mnt/efs
+
+# Verificar montaje correcto
+df -h
+```
+
+### Ejemplo de configuración automática del ciclo de vida a EFS-IA (CLI):
+
+```bash
+# Crear un sistema de archivos EFS con política de ciclo de vida para mover archivos tras 60 días de inactividad a EFS-IA
+aws efs create-file-system --performance-mode generalPurpose
+
+# Establecer una política de ciclo de vida en un sistema de archivos existente
+aws efs put-lifecycle-configuration \
+    --file-system-id fs-01234567 \
+    --lifecycle-policies "[{\"TransitionToIA\":\"AFTER_60_DAYS\"}]"
+```
+
+Este documento proporciona una visión clara sobre las características fundamentales de EFS, resaltando sus ventajas para entornos de múltiples instancias y necesidades específicas de almacenamiento compartido en AWS.
+
+# 61. Shared Responsibility Model for EC2 Storage
+
+1. En AWS existe un **modelo de responsabilidad compartida** para el almacenamiento en servicios como EBS y EFS, dividiendo claramente las tareas entre AWS y el usuario.
+
+2. AWS tiene la responsabilidad de mantener la infraestructura física, garantizando que los datos almacenados en **EBS y EFS** sean replicados automáticamente en múltiples dispositivos.
+
+3. Cuando ocurre una falla de hardware en un volumen **EBS o EFS**, es AWS quien debe gestionar y solucionar este problema, reemplazando equipos defectuosos sin impacto para el cliente.
+
+4. La replicación automática de datos en múltiples dispositivos por parte de AWS garantiza alta disponibilidad y resistencia a fallas técnicas en el almacenamiento, sin intervención del usuario.
+
+4. Para el usuario, la responsabilidad principal consiste en la **protección lógica de los datos**, lo que incluye implementar copias de seguridad o snapshots para asegurar la recuperación ante pérdida accidental o errores humanos.
+
+5. El usuario debe configurar adecuadamente la **encriptación de datos** almacenados en volúmenes EBS o sistemas EFS, para asegurar que solo personas autorizadas puedan acceder a ellos.
+
+6. Aunque AWS ofrece medidas de seguridad para evitar accesos no autorizados, la encriptación representa una protección adicional en caso de accesos no autorizados o brechas de seguridad.
+
+7. En el caso del **almacenamiento EC2 Instance Store**, la responsabilidad recae completamente en el usuario, ya que este almacenamiento no ofrece replicación automática ni durabilidad a largo plazo.
+
+8. Si una instancia EC2 con almacenamiento **Instance Store** es detenida o terminada, todos los datos almacenados en este tipo de disco se pierden irreversiblemente.
+
+9. Por la naturaleza volátil del almacenamiento **Instance Store**, es crucial que el usuario implemente estrategias robustas de respaldo y replicación para proteger los datos importantes.
+
+10. El usuario también debe gestionar cualquier riesgo asociado al uso de almacenamiento temporal (Instance Store), comprendiendo claramente sus limitaciones frente a otras soluciones como EBS o EFS.
+
+11. AWS asegura la **privacidad de los datos del usuario** almacenados en sus servicios, comprometiéndose a evitar que otros clientes o sus empleados accedan a ellos, reforzando la importancia de la encriptación propia como práctica recomendada.
+
+10. Definir y ejecutar políticas de snapshots o backups periódicos para volúmenes EBS es una práctica altamente recomendada para garantizar la disponibilidad de los datos críticos.
+
+11. Los usuarios deben implementar una adecuada **estrategia de recuperación ante desastres**, combinando servicios como AMIs, snapshots y replicación de datos, para garantizar continuidad operativa ante eventos inesperados.
+
+12. Es responsabilidad del usuario proteger sus datos frente a pérdidas accidentales mediante configuraciones como la **papelera de reciclaje** para snapshots de EBS, y la replicación interregional de AMIs.
+
+---
+
+### Ejemplo: Crear snapshot automáticamente de un volumen EBS usando AWS CLI
+
+```bash
+# Crear un snapshot automáticamente (backup)
+aws ec2 create-snapshot \
+  --volume-id vol-0abcdef1234567890 \
+  --description "Backup automatizado diario"
+```
+
+### Ejemplo: Configurar encriptación en volumen EBS al crear un nuevo volumen
+
+```bash
+# Crear un volumen EBS encriptado
+aws ec2 create-volume \
+  --size 10 \
+  --volume-type gp2 \
+  --encrypted \
+  --availability-zone us-east-1a
+```
+
+Este documento proporciona una guía clara sobre las responsabilidades compartidas entre AWS y el usuario, enfocándose en prácticas esenciales para asegurar la protección y disponibilidad de datos en instancias EC2.
+
+# 62. Amazon FSx Overview
+
+1. Amazon FSx ofrece almacenamiento administrado de alto rendimiento basado en sistemas de archivos específicos y especializados.
+
+2. FSx permite implementar sistemas de archivos optimizados para aplicaciones particulares: FSx for Windows File Server, FSx for Lustre y FSx for NetApp ONTAP.
+
+3. Amazon FSx para **Windows File Server** está especialmente diseñado para instancias EC2 con Windows, compatible con protocolos nativos como SMB y NTFS.
+
+4. Este servicio admite protocolos nativos como **SMB** (Server Message Block) y formato de archivo **NTFS** de Windows, facilitando la migración y operación en entornos Windows.
+
+5. FSx para Windows File Server se puede integrar de forma nativa con **Microsoft Active Directory**, facilitando la autenticación y control de acceso basado en usuarios.
+
+6. Es recomendable implementar FSx para Windows File Server en múltiples zonas de disponibilidad para garantizar alta disponibilidad y redundancia del almacenamiento.
+
+7. Amazon FSx también ofrece una variante especializada en aplicaciones HPC (computación de alto rendimiento): **FSx for Lustre**.
+
+6. FSx para Lustre proporciona almacenamiento específicamente optimizado para cargas de trabajo de alto rendimiento como machine learning, procesamiento paralelo y análisis de datos intensivos.
+
+7. FSx para Lustre destaca por su baja latencia (inferior a milisegundos), alta tasa de operaciones de entrada/salida (IOPS) y alto ancho de banda, alcanzando millones de operaciones por segundo.
+
+8. FSx para Lustre permite conectarse directamente a instancias EC2 o incluso integrarse fácilmente con centros de datos locales mediante conexiones directas.
+
+9. Los datos almacenados en FSx para Lustre pueden sincronizarse de manera sencilla con servicios externos, como **Amazon S3**, proporcionando una solución híbrida eficiente y escalable.
+
+10. FSx puede desplegarse en arquitecturas de múltiples zonas de disponibilidad (AZ), incrementando así la disponibilidad y tolerancia a fallos de los sistemas de archivos.
+
+11. El costo de Amazon FSx depende del tipo de sistema de archivos elegido (Windows o Lustre), de la capacidad de almacenamiento provisionada y del rendimiento específico requerido.
+
+12. Los usuarios pueden administrar FSx utilizando la **consola de AWS, CLI o SDKs**, facilitando la automatización y gestión mediante scripts.
+
+13. La elección entre FSx para Windows File Server y FSx para Lustre depende principalmente del entorno operativo y las necesidades específicas de rendimiento y aplicaciones del usuario.
+
+---
+
+### Ejemplo: Crear sistema FSx para Windows File Server (AWS CLI)
+
+```bash
+aws fsx create-file-system \
+    --file-system-type WINDOWS \
+    --storage-capacity 300 \
+    --subnet-ids subnet-12345678 \
+    --windows-configuration ActiveDirectoryId=d-1234567890abcdef0,ThroughputCapacity=32
+```
+
+### Ejemplo: Montar FSx Windows en instancia EC2 (PowerShell)
+
+```powershell
+# Montar FSx Windows en Windows EC2 usando SMB
+net use Z: \\fs-0123456789abcdef0.fsx.us-east-1.amazonaws.com\share
+```
+
+### Ejemplo: Crear un sistema FSx para Lustre enlazado a un bucket S3 (AWS CLI)
+
+```bash
+aws fsx create-file-system \
+    --file-system-type LUSTRE \
+    --storage-capacity 1200 \
+    --subnet-ids subnet-0123456789abcdef0 \
+    --lustre-configuration ImportPath=s3://mi-bucket-datos/
+```
+
+Este documento permite comprender los puntos clave de Amazon FSx y ayuda a elegir la mejor solución de almacenamiento especializado para aplicaciones específicas en AWS.
+
+
+# 63. EC2 Instance Storage Summary
+
+1. **EBS (Elastic Block Store)** permite almacenar datos de manera persistente, montados en una sola instancia EC2, pero vinculados exclusivamente a una única Zona de Disponibilidad (AZ).
+
+2. Para mover datos de **EBS entre Zonas de Disponibilidad**, se debe crear un snapshot del volumen existente y luego restaurarlo en otra AZ diferente.
+
+3. Las **AMIs (Amazon Machine Images)** son imágenes preconfiguradas de instancias EC2 que permiten desplegar rápidamente instancias idénticas con el software necesario previamente instalado.
+
+4. Para automatizar la creación, validación y distribución de AMIs, AWS ofrece el servicio **EC2 Image Builder**, que reduce la intervención manual y asegura consistencia.
+
+5. **EC2 Instance Store** proporciona almacenamiento local directamente vinculado al hardware del servidor físico, brindando rendimiento excepcional, ideal para almacenamiento temporal.
+
+6. Los datos almacenados en **EC2 Instance Store son efímeros**; se pierden permanentemente cuando la instancia se detiene o se termina.
+
+7. Para almacenamiento compartido entre múltiples instancias EC2 en una región, AWS proporciona **EFS (Elastic File System)**, un sistema de archivos en red que soporta cientos de instancias simultáneamente.
+
+8. **EFS** no requiere planificación anticipada de capacidad; solo se paga por el espacio utilizado, haciendo sencilla la escalabilidad automática.
+
+9. La clase de almacenamiento **EFS Infrequent Access (EFS-IA)** optimiza costos reduciendo hasta un 92% en archivos con acceso poco frecuente mediante políticas automáticas de ciclo de vida.
+
+10. AWS proporciona el servicio **Amazon FSx**, especializado en sistemas de archivos de alto rendimiento para casos específicos como FSx para Windows File Server y FSx para Lustre.
+
+11. **FSx para Windows** se integra con Active Directory, permitiendo montar un sistema de archivos Windows usando protocolos SMB y NTFS, accesible desde AWS y desde infraestructura local.
+
+12. **FSx para Lustre** ofrece almacenamiento optimizado para computación de alto rendimiento (HPC), análisis de grandes datos y machine learning, con conexión directa a instancias EC2 y posibilidad de integración con Amazon S3.
+
+---
+
+### Ejemplo para crear automáticamente snapshots de EBS:
+
+```bash
+# Crear snapshot de volumen EBS mediante AWS CLI
+aws ec2 create-snapshot \
+  --volume-id vol-0123456789abcdef0 \
+  --description "Snapshot-volumen-importante"
+```
+
+### Ejemplo para montar EFS en una instancia EC2 Linux:
+
+```bash
+sudo yum install -y amazon-efs-utils
+sudo mkdir -p /mnt/efs
+sudo mount -t efs fs-01234567:/ /mnt/efs
+```
+
+### Ejemplo básico creación AMI automatizada (Image Builder):
+
+```bash
+aws imagebuilder create-image-pipeline \
+  --name "mi-pipeline-AMI" \
+  --image-recipe-arn arn:aws:imagebuilder:region:account-id:image-recipe/nombre-receta/1.0.0 \
+  --infrastructure-configuration-arn arn:aws:imagebuilder:region:account-id:infrastructure-configuration/infra-config \
+  --distribution-configuration-arn arn:aws:imagebuilder:region:account-id:distribution-configuration/distribucion-config
+```
+
+Este resumen ofrece puntos clave para estudiar y dominar el almacenamiento en EC2, desde el almacenamiento persistente hasta soluciones compartidas y de alto rendimiento en AWS.
+
+
+# 64. Section Cleanup
+
+1. En AWS, es fundamental realizar limpiezas periódicas de recursos para evitar cargos inesperados y mantener un entorno organizado.
+
+2. Desde el panel principal de **EC2 Dashboard** se pueden visualizar fácilmente todos los recursos activos en la región actual.
+
+3. Las **instancias EC2** que ya no se usan deben terminarse para evitar cargos innecesarios.
+
+4. Para terminar instancias EC2 rápidamente, se seleccionan todas las instancias deseadas, clic derecho y luego se elige la opción "Terminate Instances".
+
+5. Los **volúmenes EBS raíz** asociados a una instancia se eliminan automáticamente al terminar la instancia si tienen activado "Delete on termination".
+
+6. Los volúmenes EBS adicionales no se eliminan automáticamente; deben ser eliminados manualmente para evitar cobros por almacenamiento no utilizado.
+
+7. Los **Snapshots** de EBS que no estén siendo utilizados deben eliminarse manualmente para liberar espacio y reducir costos.
+
+8. No es posible eliminar un snapshot que esté siendo usado por una AMI registrada; primero se debe deregistrar la AMI correspondiente.
+
+9. Las AMIs pueden ser fácilmente desregistradas desde la consola seleccionando la AMI y ejecutando la acción "Deregister".
+
+10. Recursos como los **Security Groups y Key Pairs** no generan costos, por lo que pueden permanecer activos sin preocupación adicional por cargos.
+
+11. Al finalizar la limpieza, se recomienda revisar nuevamente cada sección (Instancias, Volúmenes, Snapshots, AMIs) para confirmar que no queden recursos innecesarios.
+
+12. Este procedimiento garantiza un control eficiente sobre los recursos AWS y una administración más efectiva de costos, especialmente importante en entornos fuera del Free Tier.
+
+---
+
+### Ejemplo para terminar instancias EC2 usando AWS CLI:
+
+```bash
+aws ec2 terminate-instances \
+  --instance-ids i-0123456789abcdef0 i-0abcdef1234567890
+```
+
+### Ejemplo para eliminar un volumen EBS no utilizado:
+
+```bash
+aws ec2 delete-volume \
+  --volume-id vol-0123456789abcdef0
+```
+
+### Ejemplo para deregistrar una AMI y eliminar snapshot asociado:
+
+```bash
+# Deregistrar AMI
+aws ec2 deregister-image \
+  --image-id ami-0123456789abcdef0
+
+# Eliminar Snapshot
+aws ec2 delete-snapshot \
+  --snapshot-id snap-0123456789abcdef0
+```
+
+Este documento sirve como guía rápida para gestionar eficientemente la limpieza de recursos en AWS, garantizando así una correcta administración económica y operativa.

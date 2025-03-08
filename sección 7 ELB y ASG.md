@@ -1,4 +1,4 @@
-**65. High Availability, Scalability, Elasticity**
+## 65. High Availability, Scalability, Elasticity**
 
 1. **Escalabilidad y Alta Disponibilidad** son conceptos clave en la computación en la nube. La escalabilidad permite manejar mayores cargas de trabajo ajustando los recursos, mientras que la alta disponibilidad garantiza la continuidad del servicio incluso ante fallos.
 
@@ -34,7 +34,7 @@
 
 17. **Conclusión:** AWS permite implementar estrategias de alta disponibilidad, escalabilidad y elasticidad para optimizar el rendimiento, minimizar el tiempo de inactividad y reducir costos mediante un uso eficiente de los recursos en la nube.
 
-**66. Elastic Load Balancing (ELB) Overview**
+## 66. Elastic Load Balancing (ELB) Overview**
 
 1. **Elastic Load Balancing (ELB)** es un servicio gestionado por AWS que distribuye el tráfico entrante entre múltiples instancias EC2 para mejorar la escalabilidad y disponibilidad de las aplicaciones.
 
@@ -90,7 +90,7 @@
 
 18. **Optimización de Costos:** ELB permite pagar solo por el tráfico manejado, optimizando costos y mejorando la eficiencia de los recursos en la nube.
 
-**67. Application Load Balancer (ALB) Hands On**
+## 67. Application Load Balancer (ALB) Hands On**
 
 1. **Creación de instancias EC2:** Se lanza un conjunto de instancias EC2 en AWS para recibir tráfico de prueba. Se utilizan dos instancias con Amazon Linux 2 y tipo t2.micro.
 

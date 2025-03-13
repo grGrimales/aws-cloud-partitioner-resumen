@@ -443,7 +443,7 @@ aws s3api list-object-versions --bucket mi-bucket --prefix archivo.txt
 ```
 
 
-**80. S3 Versioning Hands On**
+# 80. S3 Versioning Hands On
 
 1. La configuración de versionado en S3 permite mantener un historial de cambios en los objetos de un bucket, evitando la pérdida permanente de archivos al sobrescribirlos.
 
@@ -516,7 +516,7 @@ if delete_markers:
     print("Delete marker eliminado, archivo restaurado.")
 ```
 
-**Video número 81. S3 Replication Overview**
+ # Video número 81. S3 Replication Overview
 
 1. Amazon S3 Replication permite copiar objetos entre buckets de S3 de manera asincrónica, asegurando redundancia y disponibilidad de los datos en distintas regiones o cuentas.
 
@@ -567,7 +567,7 @@ aws s3api put-bucket-replication \
 ```
 Este comando configura la replicación desde "mi-bucket-origen" hacia "mi-bucket-destino" utilizando la función de replicación de AWS S3.
 
-**Video número 82. S3 Replication Hands On**
+# Video número 82. S3 Replication Hands On
 
 1. Para configurar la replicación en Amazon S3, primero se debe crear un bucket de origen y un bucket de destino. El bucket de origen contendrá los datos iniciales y el bucket de destino recibirá las copias replicadas.
 
@@ -618,7 +618,7 @@ aws s3api put-bucket-replication \
 ```
 Este comando establece una replicación activa entre "mi-bucket-origen" y "mi-bucket-destino" asegurando la copia automática de objetos nuevos.
 
-**Video número 83. S3 Storage Classes Overview**
+# Video número 83. S3 Storage Classes Overview
 
 1. Amazon S3 ofrece diversas clases de almacenamiento, cada una optimizada para diferentes necesidades de acceso, costos y durabilidad.
 

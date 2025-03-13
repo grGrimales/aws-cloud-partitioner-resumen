@@ -442,6 +442,64 @@ aws s3 cp archivo-actualizado.txt s3://mi-bucket/archivo.txt
 aws s3api list-object-versions --bucket mi-bucket --prefix archivo.txt
 ```
 
+# Vídeo número 78. S3 Website Hands On
+
+1. Amazon S3 permite alojar sitios web estáticos utilizando HTML, CSS, JavaScript y recursos multimedia (imágenes, videos).
+
+2. Para habilitar un bucket como hosting web, se accede a la pestaña "Propiedades" en Amazon S3 y se activa la opción "Static Website Hosting".
+
+3. Es obligatorio especificar un documento índice (por ejemplo, `index.html`), que será la página principal del sitio web.
+
+4. Ejemplo sencillo del archivo `index.html`:
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Bienvenidos a mi web en S3</h1>
+  <img src="coffee.jpg" alt="Taza de café">
+</body>
+</html>
+```
+
+5. La URL generada automáticamente por S3 para acceder al sitio tiene este formato:
+```
+http://nombre-bucket.s3-website-region.amazonaws.com
+```
+
+6. Es imprescindible configurar el bucket con acceso público (mediante política de bucket) para que los archivos puedan ser visualizados por los usuarios.
+
+7. Ejemplo sencillo de política para acceso público en un bucket web:
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::mi-bucket-web/*"
+  }]
+}
+```
+
+8. El archivo definido como "índice" es el que se carga automáticamente al visitar la URL principal del sitio (por ejemplo, `index.html`).
+
+9. Es obligatorio subir al bucket el archivo definido como índice, por ejemplo, `index.html`, para evitar errores de visualización.
+
+10. Tras subir el archivo índice y otros recursos al bucket, estos son inmediatamente visibles al acceder mediante la URL del sitio web proporcionada por Amazon.
+
+11. Al habilitar el alojamiento web estático en S3, el contenido debe ser público; de lo contrario, aparecerá el error HTTP 403 ("Acceso denegado").
+
+12. Amazon S3 no admite ejecución de código del lado del servidor (PHP, Python, Node.js); solamente admite sitios web estáticos.
+
+13. Ejemplo de carga de contenido al bucket usando AWS CLI:
+```bash
+aws s3 cp index.html s3://nombre-bucket-web/
+aws s3 cp coffee.jpg s3://mi-bucket-web/
+```
+
+13. Amazon S3 ofrece una solución económica y escalable para alojar sitios web estáticos, simplificando la gestión y eliminando la necesidad de administrar servidores web.
+
+
 
 # 80. S3 Versioning Hands On
 

@@ -402,46 +402,6 @@ aws s3 cp coffee.jpg s3://mi-bucket/
 
 12. Amazon S3 ofrece una solución económica y escalable para alojar sitios web estáticos con alta disponibilidad sin necesidad de administrar servidores.
 
-# 79. Introducción al Versionado en Amazon S3
-
-1. Amazon S3 ofrece la funcionalidad de versionado, permitiendo almacenar múltiples versiones de un mismo objeto dentro de un bucket.
-
-2. Al activar el versionado, cada vez que se actualiza o sobrescribe un archivo, S3 mantiene las versiones anteriores sin borrarlas.
-
-3. Versionar objetos protege contra eliminaciones accidentales, ya que los objetos borrados pueden restaurarse desde versiones previas fácilmente.
-
-4. Si se intenta eliminar un objeto con el versionado activado, S3 no elimina el objeto, sino que coloca un marcador de eliminación, permitiendo restaurarlo posteriormente.
-
-5. La versión de un archivo que existe antes de habilitar el versionado se etiqueta con el valor `null`.
-
-6. Suspender el versionado en un bucket no elimina versiones anteriores, únicamente detiene la creación de nuevas versiones.
-
-7. Ejemplo de activación del versionado mediante AWS CLI:
-```bash
-aws s3api put-bucket-versioning \
-  --bucket mi-bucket \
-  --versioning-configuration Status=Enabled
-```
-
-8. Una vez activado, S3 asigna automáticamente un identificador único a cada versión del objeto subido.
-
-9. Ejemplo de cómo subir objetos y versionarlos utilizando AWS CLI:
-```bash
-aws s3 cp archivo.txt s3://mi-bucket/
-aws s3 cp archivo-actualizado.txt s3://mi-bucket/archivo.txt
-```
-
-10. Se recomienda mantener siempre activado el versionado para facilitar auditorías, recuperación ante errores humanos, o análisis histórico.
-
-11. Un objeto cargado antes de activar el versionado tendrá su "Version ID" marcado como `null`.
-
-12. Al desactivar temporalmente (suspender) el versionado, se mantiene el historial existente, garantizando que no se pierdan datos ya almacenados.
-
-13. Ejemplo de consulta de todas las versiones de un objeto con AWS CLI:
-```bash
-aws s3api list-object-versions --bucket mi-bucket --prefix archivo.txt
-```
-
 # Vídeo número 78. S3 Website Hands On
 
 1. Amazon S3 permite alojar sitios web estáticos utilizando HTML, CSS, JavaScript y recursos multimedia (imágenes, videos).
@@ -498,6 +458,48 @@ aws s3 cp coffee.jpg s3://mi-bucket-web/
 ```
 
 13. Amazon S3 ofrece una solución económica y escalable para alojar sitios web estáticos, simplificando la gestión y eliminando la necesidad de administrar servidores web.
+
+
+# 79. Introducción al Versionado en Amazon S3
+
+1. Amazon S3 ofrece la funcionalidad de versionado, permitiendo almacenar múltiples versiones de un mismo objeto dentro de un bucket.
+
+2. Al activar el versionado, cada vez que se actualiza o sobrescribe un archivo, S3 mantiene las versiones anteriores sin borrarlas.
+
+3. Versionar objetos protege contra eliminaciones accidentales, ya que los objetos borrados pueden restaurarse desde versiones previas fácilmente.
+
+4. Si se intenta eliminar un objeto con el versionado activado, S3 no elimina el objeto, sino que coloca un marcador de eliminación, permitiendo restaurarlo posteriormente.
+
+5. La versión de un archivo que existe antes de habilitar el versionado se etiqueta con el valor `null`.
+
+6. Suspender el versionado en un bucket no elimina versiones anteriores, únicamente detiene la creación de nuevas versiones.
+
+7. Ejemplo de activación del versionado mediante AWS CLI:
+```bash
+aws s3api put-bucket-versioning \
+  --bucket mi-bucket \
+  --versioning-configuration Status=Enabled
+```
+
+8. Una vez activado, S3 asigna automáticamente un identificador único a cada versión del objeto subido.
+
+9. Ejemplo de cómo subir objetos y versionarlos utilizando AWS CLI:
+```bash
+aws s3 cp archivo.txt s3://mi-bucket/
+aws s3 cp archivo-actualizado.txt s3://mi-bucket/archivo.txt
+```
+
+10. Se recomienda mantener siempre activado el versionado para facilitar auditorías, recuperación ante errores humanos, o análisis histórico.
+
+11. Un objeto cargado antes de activar el versionado tendrá su "Version ID" marcado como `null`.
+
+12. Al desactivar temporalmente (suspender) el versionado, se mantiene el historial existente, garantizando que no se pierdan datos ya almacenados.
+
+13. Ejemplo de consulta de todas las versiones de un objeto con AWS CLI:
+```bash
+aws s3api list-object-versions --bucket mi-bucket --prefix archivo.txt
+```
+
 
 
 
@@ -764,3 +766,100 @@ Este comando restaura "archivo.txt" desde Glacier en modo **Expedited** por 7 d�
 
 18. **S3 Intelligent-Tiering es ideal para quienes no desean gestionar manualmente el cambio de clases de almacenamiento**, ya que S3 mueve los objetos de manera automática según su uso.
 
+Aquí tienes el resumen en el formato solicitado:  
+
+---
+
+# 84. Clases de Almacenamiento en S3  
+
+1. **Creación de un bucket en S3:** Se puede crear un nuevo bucket en S3 seleccionando una región específica y configurando las opciones deseadas. Un bucket es el contenedor principal donde se almacenan objetos en AWS S3.  
+
+2. **Carga de archivos en S3:** Los archivos pueden ser cargados dentro de un bucket usando la opción de "Agregar archivos". Cada archivo subido se considera un objeto dentro del bucket y puede tener propiedades configurables.  
+
+3. **Clases de almacenamiento en S3:** Existen varias clases de almacenamiento en S3 diseñadas para diferentes casos de uso. Estas clases determinan factores como la redundancia, costos y velocidad de acceso a los objetos almacenados.  
+
+4. **S3 Standard:** Es la clase de almacenamiento por defecto en S3. Ofrece alta durabilidad, disponibilidad y baja latencia en el acceso a los datos, distribuyéndolos en múltiples zonas de disponibilidad (AZ).  
+
+5. **S3 Intelligent-Tiering:** Ideal para datos con patrones de acceso desconocidos o variables. AWS mueve automáticamente los objetos entre diferentes niveles de almacenamiento según su frecuencia de acceso, optimizando los costos.  
+
+6. **S3 Standard-IA (Infrequent Access):** Diseñada para datos que se acceden con poca frecuencia pero que aún requieren baja latencia cuando se consultan. Su costo de almacenamiento es menor que Standard, pero con tarifas adicionales por recuperación.  
+
+7. **S3 One-Zone-IA:** Similar a Standard-IA, pero almacena los datos en una sola zona de disponibilidad en lugar de varias. Esto reduce costos, pero aumenta el riesgo de pérdida de datos en caso de fallos en la AZ.  
+
+8. **S3 Glacier Instant Retrieval:** Ofrece almacenamiento de bajo costo con tiempos de recuperación rápidos. Es útil para archivos que no se acceden con frecuencia, pero que deben estar disponibles en pocos milisegundos cuando se necesitan.  
+
+9. **S3 Glacier Flexible Retrieval:** Permite almacenar datos a muy bajo costo con tiempos de recuperación más largos. Se puede acceder a los datos en minutos u horas dependiendo del tipo de recuperación seleccionado.  
+
+10. **S3 Glacier Deep Archive:** Es la opción más económica para almacenamiento a largo plazo, con tiempos de recuperación que pueden tardar hasta 12 horas. Es ideal para datos de archivo que rara vez se necesitan.  
+
+11. **Cambio de clase de almacenamiento:** Es posible modificar la clase de almacenamiento de un objeto después de haber sido almacenado. Esto se hace a través de la configuración de propiedades del objeto en el bucket.  
+
+12. **Automatización con reglas de ciclo de vida:** Se pueden crear reglas de ciclo de vida en S3 para mover objetos automáticamente entre diferentes clases de almacenamiento después de un período de tiempo específico.  
+
+13. **Ejemplo de ciclo de vida en S3:**  
+   - Mover un objeto a Standard-IA después de 30 días.  
+   - Cambiarlo a Intelligent-Tiering después de 60 días.  
+   - Archivar en Glacier Flexible Retrieval después de 180 días.  
+
+14. **Configuración de reglas de ciclo de vida:** Las reglas de ciclo de vida se configuran en la pestaña de "Gestión" dentro de un bucket S3. Se pueden aplicar a todos los objetos o a un subconjunto de ellos mediante filtros.  
+
+15. **Reducción de costos mediante almacenamiento en frío:** Usar clases de almacenamiento como Glacier o IA permite optimizar los costos para datos que no requieren acceso frecuente.  
+
+16. **Ejemplo de configuración en AWS CLI:**  
+   ```bash
+   aws s3 cp myfile.txt s3://my-bucket/ --storage-class STANDARD_IA
+   aws s3 cp myfile.txt s3://my-bucket/ --storage-class GLACIER
+   ```  
+   Estos comandos permiten cargar archivos en diferentes clases de almacenamiento directamente desde la línea de comandos.  
+
+---
+
+Este resumen proporciona los conceptos clave y ejemplos prácticos para estudiar y entender las clases de almacenamiento en S3.
+
+# 85. Cifrado en S3  
+
+1. **Cifrado en S3:** Amazon S3 permite cifrar los objetos almacenados para garantizar la seguridad de los datos. Existen dos modelos principales de cifrado: el cifrado del lado del servidor (SSE) y el cifrado del lado del cliente (CSE).  
+
+2. **Cifrado del lado del servidor (SSE):** En este modelo, el cifrado se realiza automáticamente cuando un objeto es almacenado en S3. AWS gestiona las claves y la protección de los datos sin intervención del usuario.  
+
+3. **Tipos de cifrado SSE:** Existen tres tipos principales de cifrado del lado del servidor en S3:  
+   - **SSE-S3:** AWS administra completamente las claves de cifrado.  
+   - **SSE-KMS:** Se utiliza AWS Key Management Service (KMS) para gestionar las claves.  
+   - **SSE-C:** El usuario proporciona y gestiona su propia clave de cifrado.  
+
+4. **Cifrado del lado del cliente (CSE):** En este enfoque, el usuario cifra los datos antes de subirlos a S3. Esto garantiza que AWS no pueda acceder a la información sin la clave de cifrado proporcionada por el usuario.  
+
+5. **Ventajas del cifrado del lado del servidor:** Al ser automático, reduce la complejidad de la gestión de claves y asegura que todos los objetos almacenados en S3 sean protegidos sin intervención manual.  
+
+6. **Ventajas del cifrado del lado del cliente:** Brinda un control total sobre la seguridad de los datos, asegurando que solo el usuario con la clave pueda descifrar los objetos almacenados en S3.  
+
+7. **Habilitación del cifrado en AWS CLI:** Se puede habilitar el cifrado SSE-S3 al subir un objeto con el siguiente comando:  
+   ```bash
+   aws s3 cp myfile.txt s3://my-bucket/ --sse AES256
+   ```  
+   En este caso, S3 usará su propio sistema de cifrado para proteger el archivo.  
+
+8. **Uso de SSE-KMS:** Para cifrar objetos usando AWS KMS, se puede utilizar el siguiente comando:  
+   ```bash
+   aws s3 cp myfile.txt s3://my-bucket/ --sse aws:kms
+   ```  
+   AWS gestionará las claves mediante su servicio de gestión de claves KMS.  
+
+9. **Cifrado con claves personalizadas (SSE-C):** En este método, el usuario proporciona su propia clave de cifrado, y AWS no la almacena. Para subir un archivo cifrado con SSE-C, se usa:  
+   ```bash
+   aws s3 cp myfile.txt s3://my-bucket/ --sse-c --sse-c-key "mi-clave-de-cifrado"
+   ```  
+   La clave debe ser gestionada por el usuario de manera segura.  
+
+10. **Requisitos para el cifrado del lado del cliente:** El usuario necesita una librería de cifrado antes de subir los archivos. Una opción común es utilizar OpenSSL para cifrar un archivo antes de subirlo a S3.  
+
+11. **Ejemplo de cifrado del lado del cliente con OpenSSL:**  
+   ```bash
+   openssl enc -aes-256-cbc -salt -in myfile.txt -out myfile.enc -pass pass:mi_clave_secreta
+   aws s3 cp myfile.enc s3://my-bucket/
+   ```  
+   Este proceso cifra el archivo antes de subirlo a S3.  
+
+12. **Importancia del cifrado en la seguridad de AWS:** Proteger los datos almacenados es fundamental para cumplir con normativas de seguridad y evitar accesos no autorizados.  
+
+13. **El cifrado en S3 es obligatorio en muchos casos:** Dependiendo de la industria y la regulación, puede ser un requisito obligatorio cifrar los datos en la nube para cumplir con normativas como GDPR, HIPAA o PCI DSS.  

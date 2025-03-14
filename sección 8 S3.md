@@ -863,3 +863,129 @@ Este resumen proporciona los conceptos clave y ejemplos prácticos para estudiar
 12. **Importancia del cifrado en la seguridad de AWS:** Proteger los datos almacenados es fundamental para cumplir con normativas de seguridad y evitar accesos no autorizados.  
 
 13. **El cifrado en S3 es obligatorio en muchos casos:** Dependiendo de la industria y la regulación, puede ser un requisito obligatorio cifrar los datos en la nube para cumplir con normativas como GDPR, HIPAA o PCI DSS.  
+
+
+# 86. IAM Access Analyzer para S3  
+
+1. **IAM Access Analyzer para S3** es una herramienta de monitoreo diseñada para analizar los permisos de acceso a los buckets de Amazon S3 y detectar configuraciones que podrían exponer datos a personas no autorizadas.  
+
+2. **Análisis de políticas de buckets** permite evaluar las políticas asociadas a los buckets de S3 para identificar si algún bucket es accesible públicamente o ha sido compartido con cuentas externas.  
+
+3. **Revisión de ACLs en S3** (Listas de Control de Acceso) para determinar si ciertos objetos dentro de un bucket tienen permisos de lectura o escritura abiertos a usuarios no autorizados.  
+
+4. **Análisis de puntos de acceso en S3** para verificar si existen configuraciones de acceso que permitan compartir datos con otras cuentas de AWS de forma involuntaria o sin la seguridad adecuada.  
+
+5. **Identificación de riesgos de seguridad** mostrando alertas cuando un bucket está expuesto públicamente, permitiendo tomar decisiones informadas sobre si esa configuración es intencional o representa un problema de seguridad.  
+
+6. **Uso de IAM Access Analyzer** dentro de la consola de AWS para visualizar los hallazgos, revisar los permisos y modificar configuraciones de acceso si es necesario.  
+
+7. **Ejemplo de cómo listar buckets accesibles públicamente con AWS CLI:**  
+   ```bash
+   aws s3api list-buckets --query "Buckets[*].Name"
+   ```  
+   Esto permite verificar qué buckets existen en la cuenta antes de inspeccionar sus configuraciones de seguridad.  
+
+8. **Detección de buckets compartidos con otras cuentas de AWS**, permitiendo ver con qué entidades se han compartido recursos y si esto cumple con los requisitos de seguridad definidos por la organización.  
+
+9. **Revisión de permisos inesperados** para evitar accesos no autorizados o configuraciones erróneas en las políticas de acceso de S3, como permitir acceso a todos los usuarios sin restricciones.  
+
+10. **Corrección de políticas de acceso inseguras** directamente desde IAM Access Analyzer o utilizando AWS CLI para modificar permisos. Por ejemplo, para restringir el acceso público a un bucket se puede ejecutar:  
+   ```bash
+   aws s3api put-public-access-block --bucket my-bucket --public-access-block-configuration BlockPublicAcls=true,BlockPublicPolicy=true,IgnorePublicAcls=true,RestrictPublicBuckets=true
+   ```  
+
+11. **Integración con AWS IAM** para auditar no solo los permisos en S3, sino también en otros servicios, garantizando una administración centralizada de los accesos.  
+
+12. **Buenas prácticas para la seguridad de S3**, como evitar el acceso público innecesario, utilizar roles en lugar de credenciales estáticas y revisar periódicamente los permisos de los buckets mediante Access Analyzer.  
+
+13. **Automatización de auditorías con Access Analyzer**, permitiendo establecer alertas para recibir notificaciones cuando se detecten cambios en los permisos de acceso a los recursos de S3.  
+
+# 87. Modelo de Responsabilidad Compartida para S3  
+
+1. **El modelo de responsabilidad compartida** en Amazon S3 define qué aspectos de seguridad y mantenimiento son gestionados por AWS y cuáles son responsabilidad del usuario.  
+
+2. **AWS es responsable de la infraestructura subyacente**, asegurando la disponibilidad, escalabilidad y durabilidad de S3, así como la capacidad de recuperación ante la pérdida de hasta dos centros de datos.  
+
+3. **AWS mantiene la seguridad física y lógica** de los servidores que almacenan los datos en S3, asegurando que su infraestructura cumple con auditorías de seguridad y regulaciones de cumplimiento.  
+
+4. **El usuario es responsable de la configuración de seguridad** en sus buckets de S3, lo que incluye la correcta implementación de políticas de acceso y restricciones para evitar exposiciones innecesarias de datos.  
+
+5. **Habilitación de versionado en S3**, lo que permite recuperar versiones anteriores de archivos almacenados. Esto es una responsabilidad del usuario y no está activado por defecto. Se puede habilitar con el siguiente comando:  
+   ```bash
+   aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled
+   ```  
+
+6. **Gestión de políticas de acceso en S3**, donde el usuario debe definir permisos adecuados a nivel de bucket y objeto para garantizar que solo las entidades autorizadas puedan acceder a los datos.  
+
+7. **Habilitación de registros y monitoreo** en S3, lo que permite rastrear accesos y modificaciones a los objetos almacenados. Esto no es activado automáticamente por AWS, sino que el usuario debe configurarlo manualmente.  
+
+8. **Optimización de costos en S3**, donde el usuario debe elegir la clase de almacenamiento más adecuada según la frecuencia de acceso a los datos, garantizando un uso eficiente y económico del servicio.  
+
+9. **Cifrado de datos en S3**, que no está activado por defecto, por lo que el usuario debe decidir si utilizar cifrado del lado del servidor (SSE) o cifrado del lado del cliente (CSE). Para habilitar SSE-S3 en un bucket se usa:  
+   ```bash
+   aws s3 cp myfile.txt s3://my-bucket/ --sse AES256
+   ```  
+
+10. **Protección contra eliminación accidental**, habilitando la opción de MFA Delete, que requiere autenticación adicional antes de eliminar objetos de un bucket. Se activa con:  
+   ```bash
+   aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled --mfa "serial-number mfa-code"
+   ```  
+
+11. **Configuración de reglas de ciclo de vida** en S3, permitiendo que los objetos sean movidos automáticamente entre clases de almacenamiento o eliminados después de un período determinado.  
+
+12. **Auditoría y cumplimiento normativo**, asegurando que los datos almacenados cumplan con los estándares requeridos por la organización y regulaciones aplicables, como GDPR, HIPAA o PCI DSS.  
+
+13. **Diferenciación clara entre la responsabilidad de AWS y la del usuario**, asegurando que cada parte cumpla con sus obligaciones para mantener la seguridad, eficiencia y disponibilidad de los datos en S3.  
+
+
+# 88. AWS Snow Family Overview  
+
+1. **AWS Snowball** es un dispositivo portátil y altamente seguro que permite recopilar y procesar datos en el borde (edge) y migrar grandes volúmenes de datos hacia y desde AWS.  
+
+2. **Casos de uso de Snowball** incluyen la migración de petabytes de datos hacia AWS cuando el ancho de banda de la red es insuficiente o el costo de transferencia es elevado.  
+
+3. **Tipos de dispositivos Snowball Edge:**  
+   - **Edge Storage Optimized:** Diseñado para almacenamiento masivo, con una capacidad de 210 TB.  
+   - **Edge Compute Optimized:** Enfocado en capacidades de cómputo, con almacenamiento de 28 TB y capacidad para ejecutar instancias de EC2 y funciones Lambda.  
+
+4. **Limitaciones del ancho de banda en la transferencia de datos:** Transferir grandes volúmenes de datos a través de una conexión de 1 Gbps puede tardar días o semanas, lo que hace que Snowball sea una alternativa eficiente.  
+
+5. **Proceso de uso de Snowball para migración de datos:**  
+   - Se solicita un dispositivo Snowball desde la consola de AWS.  
+   - AWS envía físicamente el dispositivo al usuario.  
+   - Se cargan los datos en el Snowball dentro de la infraestructura local.  
+   - Se devuelve el dispositivo a AWS.  
+   - AWS transfiere los datos a un bucket de Amazon S3.  
+
+6. **Reducción de costos con Snowball:** Evita gastos elevados en ancho de banda y reduce el tiempo de transferencia comparado con la carga directa de datos a través de internet.  
+
+7. **Snowball para edge computing:** Permite el procesamiento de datos en ubicaciones con conectividad limitada o inexistente, como camiones en carretera, barcos en el océano o estaciones mineras en zonas remotas.  
+
+8. **Ejemplo de carga de datos en Snowball con AWS CLI:**  
+   ```bash
+   snowballEdge list-jobs
+   snowballEdge create-job --job-type IMPORT --manifest manifest.json --role-arn arn:aws:iam::123456789012:role/SnowballImportRole
+   ```  
+   Esto permite crear un trabajo de importación de datos hacia AWS.  
+
+9. **Snowball Edge Compute Optimized** puede ejecutar instancias de Amazon EC2 y funciones AWS Lambda para procesar datos en el borde antes de enviarlos a la nube.  
+
+10. **Ejemplo de ejecución de instancia EC2 en Snowball Edge:**  
+   ```bash
+   aws ec2 run-instances --image-id ami-xxxxxxx --instance-type sbe-c.large --count 1
+   ```  
+   Esto permite ejecutar una máquina virtual en un dispositivo Snowball para procesar datos localmente.  
+
+11. **Capacidades de Machine Learning en el borde:** Snowball Edge puede ejecutar modelos de IA/ML localmente para analizar datos sin necesidad de conexión a internet.  
+
+12. **Transcodificación de medios en el borde:** Permite procesar archivos multimedia antes de enviarlos a AWS, optimizando el uso del ancho de banda.  
+
+13. **Seguridad en Snowball:** Los datos almacenados en Snowball están cifrados mediante claves de AWS KMS y el dispositivo se bloquea automáticamente si es manipulado.  
+
+14. **Seguimiento del estado de un dispositivo Snowball:**  
+   ```bash
+   aws snowball describe-job --job-id JOBID
+   ```  
+   Este comando permite monitorear el progreso de la transferencia de datos.  
+
+15. **Snowball es una solución clave para entornos sin conexión a internet o con restricciones de conectividad**, proporcionando almacenamiento portátil y capacidades de procesamiento en el borde.  

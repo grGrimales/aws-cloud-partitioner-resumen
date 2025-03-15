@@ -989,3 +989,82 @@ Este resumen proporciona los conceptos clave y ejemplos prácticos para estudiar
    Este comando permite monitorear el progreso de la transferencia de datos.  
 
 15. **Snowball es una solución clave para entornos sin conexión a internet o con restricciones de conectividad**, proporcionando almacenamiento portátil y capacidades de procesamiento en el borde.  
+
+
+# 89. AWS Snow Family Hands On  
+
+1. **AWS Snow Family** permite la transferencia física de grandes volúmenes de datos a AWS mediante dispositivos especializados como Snowball Edge.  
+
+2. **Opciones de trabajos en AWS Snowball:** Se pueden crear trabajos para importar datos hacia Amazon S3, exportar datos desde S3 o realizar procesamiento en el borde con Snowball Edge Compute Optimized.  
+
+3. **Flujo de trabajo para importar datos:** Se solicita un dispositivo Snowball desde la consola de AWS, se recibe físicamente, se cargan los datos y luego se devuelve a AWS para su importación en un bucket de S3.  
+
+4. **Flujo de trabajo para exportar datos:** AWS carga los datos en un dispositivo Snowball y lo envía al usuario, quien luego puede acceder a la información de manera local.  
+
+5. **Opciones de dispositivos disponibles:**  
+   - **Snowball Edge Storage Optimized:** Diseñado para almacenamiento masivo con capacidad de hasta 210 TB.  
+   - **Snowball Edge Compute Optimized:** Incluye capacidades de procesamiento local y almacenamiento de 28 TB.  
+
+6. **Selección de precios y facturación:** Snowball ofrece opciones de pago por día de uso, incluyendo tarifas por transferencia de datos desde y hacia S3.  
+
+7. **Configuración de seguridad y permisos:** Se debe establecer un rol de servicio para otorgar acceso al dispositivo Snowball a los buckets de S3 y garantizar la transferencia segura de datos.  
+
+8. **Definición de la dirección de envío:** El usuario debe especificar la ubicación donde AWS enviará el dispositivo Snowball, ya que será utilizado localmente antes de ser devuelto.  
+
+9. **Opciones de velocidad de envío:** AWS permite seleccionar entre envío estándar o exprés para recibir el dispositivo en un plazo de uno a dos días.  
+
+10. **Notificaciones y seguimiento del trabajo:** Es posible habilitar alertas para recibir actualizaciones sobre el estado del trabajo de Snowball, incluyendo la recepción, transferencia y carga de datos en S3.  
+
+11. **Proceso de carga de datos en el Snowball Edge:** Una vez recibido el dispositivo, los datos se copian utilizando la herramienta Snowball Client o AWS CLI.  
+   ```bash
+   snowballEdge cp my-data-folder s3://my-bucket/ --recursive
+   ```  
+
+12. **Generación automática de etiquetas de envío:** AWS proporciona una etiqueta prepagada para facilitar la devolución del dispositivo una vez que los datos han sido cargados.  
+
+13. **Confirmación del procesamiento de datos en AWS:** Cuando el dispositivo es devuelto, AWS verifica los datos y los transfiere a los buckets de S3 indicados en la configuración del trabajo.  
+
+14. **AWS Snowball es ideal para empresas que necesitan transferir grandes volúmenes de datos sin depender de conexiones de internet lentas o costosas**, optimizando la velocidad y reduciendo costos de transferencia.  
+
+
+# 90. AWS Snowball Edge - Pricing  
+
+1. **El modelo de precios de AWS Snowball Edge** se basa en el uso del dispositivo y en la transferencia de datos fuera de AWS.  
+
+2. **La carga de datos en Amazon S3 desde Snowball Edge es gratuita**, sin costos por gigabyte cuando se transfieren datos desde un Snowball Edge a un bucket de S3.  
+
+3. **La transferencia de datos fuera de AWS sí tiene costos**, por lo que si los datos son exportados desde AWS a un Snowball Edge y luego accedidos localmente, se deberá pagar por esta transferencia.  
+
+4. **Opciones de precios para Snowball Edge:**  
+   - **Pago bajo demanda (On-Demand):** Se paga una tarifa única por cada trabajo y se incluyen hasta 10 días de uso para dispositivos de 80 TB y 15 días para los de 210 TB.  
+   - **Compromiso a largo plazo (Committed Upfront):** Se paga por adelantado por períodos de uno, dos o tres años, lo que permite obtener descuentos de hasta el 62%.  
+
+5. **Los costos de envío del dispositivo Snowball Edge están incluidos en el precio del servicio**, por lo que AWS cubre los gastos de transporte de ida y vuelta.  
+
+6. **Los días de uso comienzan a contarse después del período gratuito inicial de 10 o 15 días**, dependiendo del tamaño del dispositivo.  
+
+7. **Ejemplo de solicitud de un Snowball Edge con AWS CLI:**  
+   ```bash
+   aws snowball create-job --job-type IMPORT --resources file-list.json --address-id ADDRESS_ID
+   ```  
+   Este comando permite solicitar un dispositivo para importar datos a AWS.  
+
+8. **El modelo de pago bajo demanda es ideal para migraciones de datos puntuales**, mientras que el modelo de compromiso a largo plazo es más adecuado para casos de edge computing continuos.  
+
+9. **La capacidad de almacenamiento influye en el costo:**  
+   - **80 TB (Snowball Edge Storage Optimized):** Uso inicial de 10 días.  
+   - **210 TB (Snowball Edge Compute Optimized):** Uso inicial de 15 días.  
+
+10. **AWS Snowball Edge Compute Optimized está diseñado para procesamiento en el borde**, por lo que es común contratarlo bajo el modelo de compromiso a largo plazo.  
+
+11. **Los descuentos en la opción de compromiso a largo plazo** pueden alcanzar hasta el 62% si se elige un contrato de tres años.  
+
+12. **Ejemplo de monitoreo del costo de un trabajo de Snowball con AWS CLI:**  
+   ```bash
+   aws snowball describe-job --job-id JOB_ID
+   ```  
+   Esto permite ver detalles sobre costos y estado del trabajo.  
+
+13. **El costo del servicio depende del tipo de dispositivo y del tiempo de uso después del período gratuito**, lo que permite adaptar el gasto según la necesidad de cada empresa.  
+
+14. **Para el examen de certificación de AWS, es importante recordar que la transferencia de datos hacia Amazon S3 es gratuita**, pero la transferencia fuera de AWS tiene costos asociados.  

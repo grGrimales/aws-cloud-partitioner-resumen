@@ -1068,3 +1068,80 @@ Este resumen proporciona los conceptos clave y ejemplos prácticos para estudiar
 13. **El costo del servicio depende del tipo de dispositivo y del tiempo de uso después del período gratuito**, lo que permite adaptar el gasto según la necesidad de cada empresa.  
 
 14. **Para el examen de certificación de AWS, es importante recordar que la transferencia de datos hacia Amazon S3 es gratuita**, pero la transferencia fuera de AWS tiene costos asociados.  
+
+
+# 91. Storage Gateway Overview  
+
+1. **AWS Storage Gateway permite la integración de almacenamiento on-premises con la nube de AWS**, facilitando una arquitectura híbrida donde parte de la infraestructura permanece local y otra parte está en la nube.  
+
+2. **El concepto de nube híbrida permite a las empresas combinar infraestructura local y servicios en la nube**, ya sea para facilitar una migración gradual, cumplir con regulaciones o mantener estrategias de redundancia.  
+
+3. **Storage Gateway actúa como un puente entre los datos almacenados localmente y AWS**, proporcionando una forma eficiente de extender la capacidad de almacenamiento sin cambiar aplicaciones existentes.  
+
+4. **Los principales casos de uso de Storage Gateway incluyen recuperación ante desastres, respaldo de datos y almacenamiento escalable**, evitando la necesidad de adquirir hardware adicional en la infraestructura local.  
+
+5. **Amazon S3 es un sistema de almacenamiento de objetos propietario**, lo que significa que no puede ser accedido directamente desde servidores locales sin una solución intermedia como Storage Gateway.  
+
+6. **Clasificación del almacenamiento en AWS:**  
+   - **EBS (Elastic Block Store):** Almacenamiento en bloque para instancias EC2.  
+   - **EFS (Elastic File System):** Sistema de archivos en red escalable.  
+   - **S3 y Glacier:** Almacenamiento de objetos para datos estructurados y archivados.  
+
+7. **Storage Gateway ofrece tres tipos principales de servicios:**  
+   - **File Gateway:** Proporciona acceso a archivos almacenados en S3 a través de protocolos estándar como NFS y SMB.  
+   - **Volume Gateway:** Presenta volúmenes de almacenamiento como discos locales, replicándolos en EBS o S3.  
+   - **Tape Gateway:** Emula bibliotecas de cintas virtuales para reemplazar sistemas de respaldo físicos.  
+
+8. **File Gateway es ideal para compartir archivos en la nube sin modificar las aplicaciones locales**, ya que permite acceder a los datos almacenados en S3 mediante protocolos compatibles con sistemas de archivos tradicionales.  
+
+9. **Volume Gateway permite replicar discos locales en AWS**, proporcionando una solución de almacenamiento persistente que facilita la recuperación ante fallos.  
+
+10. **Tape Gateway ofrece una alternativa basada en la nube para sistemas de backup tradicionales**, eliminando la necesidad de mantener hardware de cintas físicas en los centros de datos.  
+
+11. **AWS Storage Gateway utiliza S3, EBS y Glacier en segundo plano**, proporcionando flexibilidad para almacenar y recuperar datos según la necesidad de acceso y costos.  
+
+12. **Ejemplo de creación de una Storage Gateway mediante AWS CLI:**  
+   ```bash
+   aws storagegateway create-gateway --gateway-type FILE_S3 --gateway-name MyFileGateway --region us-east-1
+   ```  
+   Este comando permite crear una instancia de File Gateway conectada a S3.  
+
+13. **Storage Gateway permite optimizar costos de almacenamiento al utilizar S3 y Glacier**, aprovechando la capacidad de escalabilidad y pago por uso en lugar de depender de almacenamiento físico en centros de datos.  
+
+14. **Storage Gateway facilita la adopción de una estrategia de nube híbrida sin necesidad de modificar aplicaciones existentes**, permitiendo a las empresas migrar y expandir su almacenamiento sin interrupciones.  
+
+15. **Para la certificación AWS Cloud Practitioner, es importante comprender que Storage Gateway es la solución de AWS para conectar almacenamiento local con la nube**, garantizando acceso, disponibilidad y escalabilidad.  
+
+
+# 92. S3 Summary  
+
+1. **Amazon S3 organiza los datos en Buckets y Objetos**, donde los buckets deben tener un nombre único a nivel global y están vinculados a una región específica. Los objetos son los archivos almacenados dentro de los buckets.  
+
+2. **Las políticas de seguridad en S3 pueden aplicarse a nivel de usuario o de bucket**, mediante IAM Policies para usuarios y roles, o S3 Bucket Policies para definir permisos específicos sobre los buckets.  
+
+3. **El cifrado en S3 protege los archivos almacenados**, permitiendo opciones como SSE-S3 (cifrado gestionado por AWS), SSE-KMS (gestión con AWS KMS) y SSE-C (donde el usuario proporciona su propia clave).  
+
+4. **S3 puede alojar sitios web estáticos**, permitiendo el uso de buckets públicos para almacenar archivos HTML, CSS y JavaScript y servirlos como una página web estática.  
+
+5. **Versionado en S3 permite gestionar múltiples versiones de un mismo archivo**, lo que previene eliminaciones accidentales y facilita la restauración de versiones anteriores. Se puede activar con el siguiente comando:  
+   ```bash
+   aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled
+   ```  
+
+6. **Replicación en S3 permite duplicar datos en diferentes ubicaciones**, con opciones de replicación en la misma región (SRR) o replicación entre regiones (CRR), que requieren el versionado habilitado.  
+
+7. **Clases de almacenamiento en S3 ofrecen opciones según la frecuencia de acceso**, incluyendo Standard, Infrequent Access (IA), One-Zone IA, Intelligent-Tiering y las clases de almacenamiento Glacier para archivos archivados.  
+
+8. **AWS Snow Family facilita la migración física de grandes volúmenes de datos a AWS**, con dispositivos como Snowball, Snowcone y Snowmobile, permitiendo importar datos a S3 sin depender del ancho de banda de internet.  
+
+9. **Snowball Edge permite realizar procesamiento de datos en el borde**, ejecutando instancias de EC2 o funciones Lambda directamente en el dispositivo antes de transferir los datos a AWS.  
+
+10. **OpsHub proporciona una interfaz gráfica para gestionar dispositivos Snow Family**, facilitando la carga y administración de datos en Snowball y Snowcone.  
+
+11. **AWS Storage Gateway extiende el almacenamiento local hacia Amazon S3**, permitiendo integrar sistemas on-premises con la nube mediante opciones como File Gateway, Volume Gateway y Tape Gateway.  
+
+12. **El almacenamiento en S3 es altamente duradero y disponible**, con un diseño que permite la redundancia automática en múltiples zonas de disponibilidad dentro de una región.  
+
+13. **S3 permite la automatización de la gestión de datos mediante reglas de ciclo de vida**, moviendo automáticamente archivos entre clases de almacenamiento o eliminándolos tras un periodo específico.  
+
+14. **Con el conocimiento adquirido sobre Amazon S3 y sus características, es posible responder preguntas en el examen de certificación de AWS**, aplicando los conceptos de seguridad, almacenamiento y migración de datos.  
